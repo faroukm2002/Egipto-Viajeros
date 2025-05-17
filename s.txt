@@ -1,0 +1,80 @@
+I'm working on an admin panel project using:
+
+    Next.js (App Router)
+
+    TypeScript
+
+    Tailwind CSS
+
+    React-Admin
+
+    Dummy data only (no real API yet)
+
+Please help me complete, clean, and upgrade the project with the following requirements:
+✅ TECHNICAL TASKS:
+
+    Upgrade the project to Next.js version 15.3.1
+
+    Upgrade all project dependencies (React, Tailwind, React-Admin, etc.) to their latest stable versions
+
+    Remove the Dashboard page entirely (I don't need it)
+
+    Improve layout responsiveness across all screen sizes (mobile, tablet, desktop)
+
+    Use dummy data for all resources (stored in static files or in-memory arrays)
+
+    Ensure all features/pages are complete and working (no unfinished code or placeholders)
+
+✅ FEATURES TO ADD:
+
+    Add a Dark Mode toggle
+
+        Must work well with Tailwind CSS
+
+        Can store preference in localStorage or use Tailwind's dark class strategy
+
+    Add Authentication:
+
+        Simple Login Page (no backend – just simulate login with dummy user)
+
+        Logout Button with good UX
+
+        Change Password Page (form only, no real backend)
+
+    Improve overall design:
+
+        Clean spacing, padding, layout consistency
+
+        Good typography and structure
+
+        Better sidebar / layout for admin structure
+
+        Use modern UI patterns and Tailwind best practices
+
+✅ PROJECT CONTEXT:
+
+The admin panel manages these resources:
+
+    Hotels
+
+    Yachts
+
+    Tours
+
+    Articles
+
+    Reviews
+
+    Inquiries
+
+    Packages
+
+    FAQs
+
+    News
+
+    Emails
+
+    Settings
+
+Each resource should have full CRUD support using React-Admin with dummy data only.
