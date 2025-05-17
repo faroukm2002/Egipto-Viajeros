@@ -11,19 +11,30 @@ import { Compass } from "lucide-react";
 export function LoginForm() {
   const router = useRouter();
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    // Simulate authentication
-    if (email === "admin@example.com" && password === "password") {
-      localStorage.setItem("isAuthenticated", "true");
-      router.push("/");
-    } else {
-      setError("Invalid credentials");
+    try {
+      // Simulate authentication
+      if (email === "admin@example.com" && password === "password") {
+        localStorage.setItem("isAuthenticated", "true");
+        document.cookie = "isAuthenticated=true; path=/";
+        router.push("/");
+      } else {
+        setError("Invalid email or password");
+      }
+    } catch (error) {
+      setError("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -49,6 +60,7 @@ export function LoginForm() {
                 type="email"
                 placeholder="admin@example.com"
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -58,6 +70,7 @@ export function LoginForm() {
                 name="password"
                 type="password"
                 required
+                disabled={isLoading}
               />
             </div>
             {error && (
@@ -65,8 +78,12 @@ export function LoginForm() {
             )}
           </CardContent>
           <CardFooter>
-            <Button className="w-full" type="submit">
-              Sign in
+            <Button 
+              className="w-full" 
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </CardFooter>
         </form>

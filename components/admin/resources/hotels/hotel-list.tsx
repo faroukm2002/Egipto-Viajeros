@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,45 +22,70 @@ interface Hotel {
 }
 
 export default function HotelList() {
-  const [hotels, setHotels] = useState<Hotel[]>(() => {
-    try {
-      const { data } = dataProvider.getList('hotels', {
-        pagination: { page: 1, perPage: 25 },
-        sort: { field: 'id', order: 'ASC' },
-        filter: {},
-      });
-      return (data as Hotel[]) || [];
-    } catch (error) {
-      console.error('Error fetching hotels:', error);
-      return [];
-    }
-  });
+  const [hotels, setHotels] = useState<Hotel[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const [isCreating, setIsCreating] = useState(false);
   const [editingHotel, setEditingHotel] = useState<Hotel | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  useEffect(() => {
+    const fetchHotels = async () => {
+      try {
+        const { data } = await dataProvider.getList('hotels', {
+          pagination: { page: 1, perPage: 25 },
+          sort: { field: 'id', order: 'ASC' },
+          filter: {},
+        });
+        setHotels(data as Hotel[]);
+      } catch (err) {
+        setError('Failed to load hotels. Please try again later.');
+        console.error('Error fetching hotels:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHotels();
+  }, []);
+
   const handleCreateHotel = (newHotel: Omit<Hotel, 'id'>) => {
-    const { data } = dataProvider.create('hotels', { data: newHotel });
-    setHotels([...hotels, data as Hotel]);
-    setIsCreating(false);
+    try {
+      const { data } = dataProvider.create('hotels', { data: newHotel });
+      setHotels([...hotels, data as Hotel]);
+      setIsCreating(false);
+    } catch (err) {
+      console.error('Error creating hotel:', err);
+      // Handle error appropriately
+    }
   };
 
   const handleUpdateHotel = (updatedHotel: Hotel) => {
-    const { data } = dataProvider.update('hotels', {
-      id: updatedHotel.id,
-      data: updatedHotel,
-      previousData: editingHotel as Hotel,
-    });
-    
-    setHotels(hotels.map(hotel => hotel.id === updatedHotel.id ? (data as Hotel) : hotel));
-    setEditingHotel(null);
+    try {
+      const { data } = dataProvider.update('hotels', {
+        id: updatedHotel.id,
+        data: updatedHotel,
+        previousData: editingHotel as Hotel,
+      });
+      
+      setHotels(hotels.map(hotel => hotel.id === updatedHotel.id ? (data as Hotel) : hotel));
+      setEditingHotel(null);
+    } catch (err) {
+      console.error('Error updating hotel:', err);
+      // Handle error appropriately
+    }
   };
 
   const handleDeleteHotel = (id: number) => {
     if (window.confirm('Are you sure you want to delete this hotel?')) {
-      dataProvider.delete('hotels', { id, previousData: {} as any });
-      setHotels(hotels.filter(hotel => hotel.id !== id));
+      try {
+        dataProvider.delete('hotels', { id, previousData: {} as any });
+        setHotels(hotels.filter(hotel => hotel.id !== id));
+      } catch (err) {
+        console.error('Error deleting hotel:', err);
+        // Handle error appropriately
+      }
     }
   };
   
@@ -79,6 +104,19 @@ export default function HotelList() {
           setEditingHotel(null);
         }}
       />
+    );
+  }
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-full">Loading...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <p className="text-destructive mb-4">{error}</p>
+        <Button onClick={() => window.location.reload()}>Retry</Button>
+      </div>
     );
   }
 

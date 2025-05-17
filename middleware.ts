@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const isAuthenticated = request.cookies.has("isAuthenticated");
+  const isAuthenticated = request.cookies.has("isAuthenticated") || localStorage.getItem("isAuthenticated") === "true";
   const isLoginPage = request.nextUrl.pathname === "/login";
 
   if (!isAuthenticated && !isLoginPage) {
