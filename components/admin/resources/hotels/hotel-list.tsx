@@ -23,13 +23,17 @@ interface Hotel {
 
 export default function HotelList() {
   const [hotels, setHotels] = useState<Hotel[]>(() => {
-    // Fetch hotels from the data provider
-    const { data } = dataProvider.getList('hotels', {
-      pagination: { page: 1, perPage: 25 },
-      sort: { field: 'id', order: 'ASC' },
-      filter: {},
-    });
-    return data as Hotel[];
+    try {
+      const { data } = dataProvider.getList('hotels', {
+        pagination: { page: 1, perPage: 25 },
+        sort: { field: 'id', order: 'ASC' },
+        filter: {},
+      });
+      return (data as Hotel[]) || [];
+    } catch (error) {
+      console.error('Error fetching hotels:', error);
+      return [];
+    }
   });
   
   const [isCreating, setIsCreating] = useState(false);
