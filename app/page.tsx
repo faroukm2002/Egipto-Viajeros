@@ -1,10 +1,10 @@
 import AdminLayout from '@/components/layout/admin-layout';
-import AdminApp from '@/components/admin/admin-app';
+import HotelList from '@/components/admin/resources/hotels/hotel-list';
 
 export default function Home() {
   return (
     <AdminLayout>
-      <AdminApp />
+      <HotelList />
     </AdminLayout>
   );
 }
